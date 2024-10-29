@@ -54,7 +54,7 @@ class BeachWithShip (location.SubLocation):
     def enter (self):
         display.announce ("You arrive at the beach of a seemingly peaceful island.\n" +
                   "Your ship is at anchor in a small bay to the south.\n" +
-                  "The calm blow of the wind rustles the ancient-looking tress adorned with vibrant foliage.\n" + 
+                  "The calm blow of the wind rustles the ancient-looking tress adorned with vibrant foliage.\n" +
                   "Up ahead, you can see a a shrine sitting atop a hill.")
 
     def process_verb (self, verb, cmd_list, nouns):
@@ -185,21 +185,21 @@ class GiantSpiderEvent (event.Event):
         return result
 
 class GiantSpider(Monster):
-    
+
     # Giant spider can bite or slash. Both do the same damage, it's just a flavor difference.
     # 100-110 speed. 64-96 health.
     def __init__ (self):
         attacks = {}
         attacks["bite"] = ["bites",random.randrange(60,80), (5,15)]
         attacks["slash"] = ["slashes",random.randrange(60,80), (5,15)]
-        super().__init__("Giant Spider", random.randint(64,96), attacks, 100 + random.randint(0, 10)) 
+        super().__init__("Giant Spider", random.randint(64,96), attacks, 100 + random.randint(0, 10))
 
 class DoubleHoe(Item):
 
     # Less damage than a cutlass, but lets you pick up to two targets per fight.
     def __init__(self):
-        super().__init__("double-hoe", 10) 
-        self.damage = (8,50) 
+        super().__init__("double-hoe", 10)
+        self.damage = (8,50)
         self.skill = "swords"
         self.verb = "slam"
         self.verb2 = "slams"
@@ -266,7 +266,7 @@ class SouthHill (location.SubLocation):
                 if(flowerChoice in self.flowers):
                     self.flowers.remove(flowerChoice)
                     pickedFlower = True
-                    
+
                     # Handle the appropriate effect for the flower color that the player chose.
                     SouthHill.GetEffectFromFlowerColor(flowerChoice)
 
@@ -278,13 +278,13 @@ class SouthHill (location.SubLocation):
     def GetThreeFlowerColors():
         listOfColors = ["Red", "Blue", "Green", "White", "Black"]
         return random.choices(listOfColors, k=3)
-    
+
     # Handles the effect of the flower inputted through the 'choice' parameter.
     @staticmethod
     def GetEffectFromFlowerColor(choice):
-        # We refer to config.the_player a bunch in this function, so it's more convenient to make it a variable here so that we don't have to type out the whole thing every time. Shouldn't affect readability. 
-        game = config.the_player 
-        
+        # We refer to config.the_player a bunch in this function, so it's more convenient to make it a variable here so that we don't have to type out the whole thing every time. Shouldn't affect readability.
+        game = config.the_player
+
         # Harm a random crewmate for picking the flower from the field it was so peacefully resting in. Gives a decent bit of score.
         if(choice == "Red"):
             randomPirate = random.choice(game.get_pirates())
@@ -294,14 +294,14 @@ class SouthHill (location.SubLocation):
             display.announce(f"{randomPirate.get_name()} feels a sharp pang throughout their body as they pick the flower.")
 
         # "Time Travel" the crew, doing a few different things:
-        #   -Randomizes the ship position and sets the crew's position to be the ship. 
+        #   -Randomizes the ship position and sets the crew's position to be the ship.
         #   -Heals or hurts pirates at random, as if they were damaged from their travels.
         #   -Makes some sick or lucky at random.
         #   -Randomizes the ship's food and medicine.
-        elif(choice == "Blue"): 
+        elif(choice == "Blue"):
             spotX = random.randint(1, 5)
             spotY = random.randint(1, 5)
-            # Make either movement negative at a 50% chance. 
+            # Make either movement negative at a 50% chance.
             if(random.randint(0, 1) == 0):
                 spotX *= -1
             if(random.randint(0, 1) == 0):
@@ -310,7 +310,7 @@ class SouthHill (location.SubLocation):
             # Clamp the numbers so the location can't be outside the world.
             spotX = numpy.clip(game.ship.loc.get_x() + spotX, 0, game.world.worldsize)
             spotY = numpy.clip(game.ship.loc.get_y() + spotY, 0, game.world.worldsize)
-                
+
             new_loc = game.world.get_loc (spotX, spotY)
             game.go = True
             game.ship.set_loc (new_loc)
@@ -340,12 +340,12 @@ class SouthHill (location.SubLocation):
             display.announce(f"As soon as your crew picks the flower, you blink, and you seem to suddenly be a few days further in time.")
 
         # Nothing special, just an extra 5 free score at the end.
-        elif(choice == "Green"): 
+        elif(choice == "Green"):
             game.add_to_inventory([GreenFlower()])
             display.announce(f"You pick the flower from the field. Nothing seems to happen.")
 
         # Reroll a pirate's stats
-        elif(choice == "Black"): 
+        elif(choice == "Black"):
             randomPirate = random.choice(game.get_pirates())
             randomPirate.skills["brawling"] = random.randrange(10,101)
             randomPirate.skills["swords"] = random.randrange(10,101)
@@ -354,6 +354,7 @@ class SouthHill (location.SubLocation):
             randomPirate.skills["cannons"] = random.randrange(10,101)
             randomPirate.skills["swimming"] = random.randrange(10,101)
             display.announce(f"The black flower wilts as soon as {randomPirate.get_name()} picks it. They feel different.")
+
         # Add three instances of the seagull event to the worldwide event pool.
         elif(choice == "White"):
             SEAGULL_COUNT = 3
@@ -364,21 +365,21 @@ class SouthHill (location.SubLocation):
 
 class GreenFlower(Item): # 5 free score.
     def __init__(self):
-        super().__init__("green-flower", 5) 
+        super().__init__("green-flower", 5)
 
 class WhiteFlower(Item): # 10 free score because you have to put up with more seagulls.
     def __init__(self):
-        super().__init__("white-flower", 10) 
+        super().__init__("white-flower", 10)
 
 class BlueFlower(Item): # 25 free score. Time travel is risky.
     def __init__(self):
-        super().__init__("blue-flower", 10) 
+        super().__init__("blue-flower", 10)
 
 class RedFlower(Item): # 50 free score, since you need to take damage for it.
     def __init__(self):
-        super().__init__("red-flower", 50) 
+        super().__init__("red-flower", 50)
 
-# A shrine to an ancient deity. An invisible spirit guardian protects it, rewarding those who show wisdom. 
+# A shrine to an ancient deity. An invisible spirit guardian protects it, rewarding those who show wisdom.
 class Shrine (location.SubLocation):
     def __init__ (self, m):
         super().__init__(m)

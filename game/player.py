@@ -129,6 +129,12 @@ class Player (Context):
                         self.go = False
                 else:
                     self.location.process_verb(cmd_list[1], cmd_list, nouns)
+        elif (verb == "read"):
+            if (len(cmd_list) > 1):
+                for i in self.inventory:
+                    if i.name == cmd_list[1]:
+                        i.process_verb(verb, cmd_list, nouns)
+
         else:
             display.announce ("Error: Player object does not understand verb " + verb)
             pass

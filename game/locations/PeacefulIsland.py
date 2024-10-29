@@ -319,7 +319,7 @@ class SouthHill (location.SubLocation):
 
             for i in game.get_pirates():
                 # Mess with the crewmate's health a bit.
-                i.health //= random.uniform(0.5, 1.5)
+                i.health = int(i.health/random.uniform(0.5, 1.5))
                 i.health += random.randrange(-20, 20)
                 if(i.health > i.max_health):
                     i.health = i.max_health
@@ -333,8 +333,8 @@ class SouthHill (location.SubLocation):
                     i.sick = True
 
             # The crew would've used food and medicine over time, along with possibly obtaining some.
-            game.ship.food //= random.uniform(0.5, 1.5)
-            game.ship.medicine //= random.uniform(0.5, 1.5)
+            game.ship.food = int(game.ship.food/random.uniform(0.5, 1.5))
+            game.ship.medicine = int(game.ship.medicine/random.uniform(0.5, 1.5))
 
             game.add_to_inventory([BlueFlower()])
             display.announce(f"As soon as your crew picks the flower, you blink, and you seem to suddenly be a few days further in time.")

@@ -193,6 +193,7 @@ class GiantSpider(Monster):
         attacks["bite"] = ["bites",random.randrange(60,80), (5,15)]
         attacks["slash"] = ["slashes",random.randrange(60,80), (5,15)]
         super().__init__("Giant Spider", random.randint(64,96), attacks, 100 + random.randint(0, 10))
+        self.type_name = "Giant Spider"
 
 class DoubleHoe(Item):
 

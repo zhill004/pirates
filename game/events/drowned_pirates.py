@@ -24,6 +24,7 @@ class DrownedPirates (event.Event):
             min = 1
             uplim = 5
             monsters.append(combat.Drowned("Pirate captain"))
+            self.type_name = "Drowned Pirate Captain"
             monsters[0].speed = 1.2*monsters[0].speed
             monsters[0].health = 2*monsters[0].health
         n_appearing = random.randrange(min, uplim)

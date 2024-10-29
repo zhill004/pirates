@@ -64,7 +64,7 @@ class ActionResolver():
                     if roll < chosen_attk.success:
                         display.announce (moving.get_name() + " " + chosen_attk.description + " " + chosen_target.get_name() + "!")
                         damage = random.randrange(chosen_attk.damage_range[0],chosen_attk.damage_range[1]+1)
-                        deathcause = "slain by a " + moving.get_name() + "'s " + chosen_attk.name
+                        deathcause = "slain by a " + moving.get_type_name() + "'s " + chosen_attk.name
                         deader = chosen_target.inflict_damage(damage, deathcause, True)
                         if not (deader is None):
                             display.announce (deader.get_name() + " is killed!")
@@ -76,6 +76,7 @@ class ActionResolver():
 class CombatCritter(ActionResolver):
     def __init__(self, name, hp, speed):
         self.name = name
+        self.type_name = "creature"
         self.lucky = False
         self.health = hp
         self.speed = speed
@@ -88,6 +89,9 @@ class CombatCritter(ActionResolver):
 
     def get_name(self):
         return self.name
+
+    def get_type_name(self):
+        return self.type_name
 
     def isLucky(self):
         return self.lucky

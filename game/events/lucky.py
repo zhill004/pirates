@@ -3,6 +3,7 @@ from game import event
 import random
 import game.config as config
 
+#Example benificial status event. Examine crewmate.lucky and handling.
 class LuckyDay (event.Event):
     '''This event picks one pirate to have a lucky day, setting their "lucky" bool to True. By itself this has no effect, but a variety of things check lucky.'''
     def __init__ (self):

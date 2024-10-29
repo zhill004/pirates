@@ -3,6 +3,7 @@ from game import event
 import random
 import game.config as config
 
+#Example status-ailment event. Examine crewmate.sick and handling (crewmate.set_sickness() etc)
 class Sickness(event.Event):
 
     def __init__ (self):

@@ -1,6 +1,6 @@
 from game.context import Context
 import game.config as config
-from game.display import *
+import game.display as display
 import random
 
 class Location:
@@ -77,9 +77,9 @@ class SubLocation(Context):
         if len(self.events) > 0 and self.event_chance > random.randrange(100):
             random.shuffle (self.events)
             today_event = self.events.pop()
-            announce ("----------------------",pause=False)
+            display.announce ("----------------------",pause=False)
             results = today_event.process (self)
-            announce (results["message"])
+            display.announce (results["message"])
             for e in results["newevents"]:
                 self.events.append(e)
-            announce ("----------------------",pause=False)
+            display.announce ("----------------------",pause=False)

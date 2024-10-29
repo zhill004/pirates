@@ -1,5 +1,5 @@
 from __future__ import annotations
-from game.display import announce
+import game.display as display
 from game.display import menu
 import random
 
@@ -62,16 +62,16 @@ class ActionResolver():
                     if moving.isLucky() == True:
                         roll = min(roll, random.randrange(100))
                     if roll < chosen_attk.success:
-                        announce (moving.get_name() + " " + chosen_attk.description + " " + chosen_target.get_name() + "!")
+                        display.announce (moving.get_name() + " " + chosen_attk.description + " " + chosen_target.get_name() + "!")
                         damage = random.randrange(chosen_attk.damage_range[0],chosen_attk.damage_range[1]+1)
                         deathcause = "slain by a " + moving.get_name() + "'s " + chosen_attk.name
                         deader = chosen_target.inflict_damage(damage, deathcause, True)
                         if not (deader is None):
-                            announce (deader.get_name() + " is killed!")
+                            display.announce (deader.get_name() + " is killed!")
                     elif (roll == chosen_attk.success):
-                        announce (moving.get_name() + " barely misses " + chosen_target.get_name() + "!")
+                        display.announce (moving.get_name() + " barely misses " + chosen_target.get_name() + "!")
                     else:
-                        announce (moving.get_name() + " misses " + chosen_target.get_name() + ".")
+                        display.announce (moving.get_name() + " misses " + chosen_target.get_name() + ".")
 
 class CombatCritter(ActionResolver):
     def __init__(self, name, hp, speed):

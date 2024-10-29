@@ -1,6 +1,6 @@
 from game import location
 import game.config as config
-from game.display import announce
+import game.display as display
 from game.events import *
 from game.items import Item
 import random
@@ -52,14 +52,14 @@ class BeachWithShip (location.SubLocation):
         self.events.append(seagull.Seagull())
 
     def enter (self):
-        announce ("You arrive at the beach of a seemingly peaceful island.\n" +
+        display.announce ("You arrive at the beach of a seemingly peaceful island.\n" +
                   "Your ship is at anchor in a small bay to the south.\n" +
                   "The calm blow of the wind rustles the ancient-looking tress adorned with vibrant foliage.\n" + 
                   "Up ahead, you can see a a shrine sitting atop a hill.")
 
     def process_verb (self, verb, cmd_list, nouns):
         if (verb == "south"):
-            announce ("You return to your ship.")
+            display.announce ("You return to your ship.")
             config.the_player.next_loc = config.the_player.ship
             config.the_player.visiting = False
         elif (verb == "north"):
@@ -81,7 +81,7 @@ class EastBeach (location.SubLocation):
 
     def enter (self):
         description = "You walk upon the east beach of the island.\nThe sand is smooth beneath your feet."
-        announce(description)
+        display.announce(description)
 
     def process_verb (self, verb, cmd_list, nouns):
         if (verb == "west"):
@@ -105,7 +105,7 @@ class WestBeach (location.SubLocation):
 
     def enter (self):
         description = "You walk upon the west beach of the island.\nUnnaturally tall palm tress hang high above your head."
-        announce(description)
+        display.announce(description)
 
     def process_verb (self, verb, cmd_list, nouns):
         if (verb == "east"):
@@ -131,7 +131,7 @@ class NorthBeach (location.SubLocation):
 
     def enter (self):
         description = "You walk upon the north beach of the island.\nA worn-down shed sits to the side of the beach. You can enter it."
-        announce(description)
+        display.announce(description)
 
     def process_verb (self, verb, cmd_list, nouns):
         if (verb == "south"):
@@ -156,7 +156,7 @@ class Shed (location.SubLocation):
 
     def enter (self):
         description = "Rotted wood lines the walls of the musty shed."
-        announce(description)
+        display.announce(description)
 
     def process_verb (self, verb, cmd_list, nouns):
         if (verb == "exit" or verb == "leave"):
@@ -171,19 +171,19 @@ class GiantSpiderEvent (event.Event):
     def process (self, world):
         result = {}
         spider = GiantSpider()
-        announce("A giant spider leaps from the ceiling and attacks your crew!")
+        display.announce("A giant spider leaps from the ceiling and attacks your crew!")
         combat.Combat([spider]).combat()
-        announce("The giant spider goes limp.")
+        display.announce("The giant spider goes limp.")
         # Set newevents to an empty list. If I added 'self' to the list, the event would be readded upon completing, effectively making the spider respawn every turn you are in here.
         result["newevents"] = []
         # Set the result message to an empty string, as we are printing our own strings at the right time.
         result["message"] = ""
 
-        announce("In the shed, you find a double-headed hoe. It looks like it'd make a decent weapon.")
+        display.announce("In the shed, you find a double-headed hoe. It looks like it'd make a decent weapon.")
         config.the_player.add_to_inventory([DoubleHoe()])
-        
+
         return result
-    
+
 class GiantSpider(Monster):
     
     # Giant spider can bite or slash. Both do the same damage, it's just a flavor difference.
@@ -236,7 +236,7 @@ class SouthHill (location.SubLocation):
 
     def enter (self):
         description = "You walk forward through the tress and up the south end of the hill towards the shrine.\nColorful flowers dot the grass you walk through. It might be fun to pick one from the ground."
-        announce(description)
+        display.announce(description)
 
     def process_verb (self, verb, cmd_list, nouns):
         if (verb == "south" or verb == "east" or verb == "west"):
@@ -291,7 +291,7 @@ class SouthHill (location.SubLocation):
             randomPirate.inflict_damage(10, " disturbing nature.")
 
             game.add_to_inventory([RedFlower()])
-            announce(f"{randomPirate.get_name()} feels a sharp pang throughout their body as they pick the flower.")
+            display.announce(f"{randomPirate.get_name()} feels a sharp pang throughout their body as they pick the flower.")
 
         # "Time Travel" the crew, doing a few different things:
         #   -Randomizes the ship position and sets the crew's position to be the ship. 
@@ -337,12 +337,12 @@ class SouthHill (location.SubLocation):
             game.ship.medicine //= random.uniform(0.5, 1.5)
 
             game.add_to_inventory([BlueFlower()])
-            announce(f"As soon as your crew picks the flower, you blink, and you seem to suddenly be a few days further in time.")
+            display.announce(f"As soon as your crew picks the flower, you blink, and you seem to suddenly be a few days further in time.")
 
         # Nothing special, just an extra 5 free score at the end.
         elif(choice == "Green"): 
             game.add_to_inventory([GreenFlower()])
-            announce(f"You pick the flower from the field. Nothing seems to happen.")
+            display.announce(f"You pick the flower from the field. Nothing seems to happen.")
 
         # Reroll a pirate's stats
         elif(choice == "Black"): 
@@ -353,16 +353,15 @@ class SouthHill (location.SubLocation):
             randomPirate.skills["guns"] = random.randrange(10,101)
             randomPirate.skills["cannons"] = random.randrange(10,101)
             randomPirate.skills["swimming"] = random.randrange(10,101)
-            announce(f"The black flower wilts as soon as {randomPirate.get_name()} picks it. They feel different.")
-        
+            display.announce(f"The black flower wilts as soon as {randomPirate.get_name()} picks it. They feel different.")
         # Add three instances of the seagull event to the worldwide event pool.
         elif(choice == "White"):
             SEAGULL_COUNT = 3
             for i in range(SEAGULL_COUNT):
                 game.world.events.append(seagull.Seagull())
             game.add_to_inventory([WhiteFlower()])
-            announce("You hear a loud squawking in the distance as you pick the white flower.")
-        
+            display.announce("You hear a loud squawking in the distance as you pick the white flower.")
+
 class GreenFlower(Item): # 5 free score.
     def __init__(self):
         super().__init__("green-flower", 5) 
@@ -393,7 +392,7 @@ class Shrine (location.SubLocation):
 
     def enter (self):
         description = "You walk to the top of the hill. A finely-crafted shrine of scarlet and yellow wood stands before you. You may investigate it."
-        announce(description)
+        display.announce(description)
 
     def process_verb (self, verb, cmd_list, nouns):
         if (verb == "north" or verb == "east" or verb == "west"):
@@ -432,11 +431,11 @@ class Shrine (location.SubLocation):
             choice = input("What is your guess? ")
             if riddle[1] in choice:
                 self.RiddleReward()
-                announce("Feeling blessed by the shrine spirit, you say your thanks and turn away.")
+                display.announce("Feeling blessed by the shrine spirit, you say your thanks and turn away.")
                 return
             else:
                 guesses -= 1
-                announce("You have guessed incorrectly.")
+                display.announce("You have guessed incorrectly.")
 
         if(guesses <= 0):
             self.shrineUsed = True
@@ -450,10 +449,10 @@ class Shrine (location.SubLocation):
             ("I have four corners like a square pancake, but I'm stuffed and seasoned and carefully baked. I pass through the lips one piece at a time, the more you consume, the broader your mind. What am I?", "book")
             ]
         return random.choice(riddleList)
-    
+
     # Reward the player by making all of their pirates lucky, not sick, and fully healed.
     def RiddleReward(self):
-        announce("You have guessed correctly. I will now mend your crew and bless them with luck.")
+        display.announce("You have guessed correctly. I will now mend your crew and bless them with luck.")
         for i in config.the_player.get_pirates():
             i.lucky = True
             i.sick = False

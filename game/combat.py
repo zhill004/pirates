@@ -3,7 +3,7 @@ import game.config as config
 import game.crewmate as crew
 import game.superclasses as superclasses
 from game.context import Context
-from game.display import announce
+import game.display as display
 from game.display import menu
 
 class Combat():
@@ -16,7 +16,7 @@ class Combat():
 
     def crewmateAction(self, attacker, allies, enemies):
         """The player chooses an action for a crewmate to take."""
-        announce(attacker.get_name() + " has seized the initiative! What should they do?",pause=False)
+        display.announce(attacker.get_name() + " has seized the initiative! What should they do?",pause=False)
         actions = attacker.getAttacks()
         # actions = attacker.getMiscActions()
         if len(actions) > 0:

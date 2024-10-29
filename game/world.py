@@ -4,7 +4,7 @@ from game.locations import *
 from game.events import *
 import game.ship as ship
 import game.context as context
-from game.display import announce
+import game.display as display
 import game.config as config
 import game.combat as Combat
 
@@ -73,19 +73,19 @@ class World (context.Context):
 
     def start_day (self):
         self.day = self.day + 1
-#        announce ("starting day " + str(self.day))
+#        display.announce ("starting day " + str(self.day))
 
         if self.day > 1:
             num_events = random.randint (0,2)
             random.shuffle (self.events)
             for i in range (0, num_events):
                 today_event = self.events.pop()
-                announce ("----------------------",pause=False)
+                display.announce ("----------------------",pause=False)
                 results = today_event.process (self)
-                announce (results["message"])
+                display.announce (results["message"])
                 for e in results["newevents"]:
                     self.events.append(e)
-                announce ("----------------------",pause=False)
+                display.announce ("----------------------",pause=False)
 
         # ship knows where it is
         action = self.ship.start_day(self)
@@ -95,7 +95,7 @@ class World (context.Context):
 
 
     def end_day (self):
-#        announce ("ending day " + str(self.day))
+#        display.announce ("ending day " + str(self.day))
 
         # ship knows where it is
         action = self.ship.end_day(self)

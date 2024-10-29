@@ -2,7 +2,7 @@
 import random
 import game.combat as combat
 import game.superclasses as superclasses
-from game.display import announce
+import game.display as display
 import game.items as items
 from game.context import Context
 import game.config as config
@@ -66,13 +66,13 @@ class CrewMate(Context, superclasses.CombatCritter):
         '''Makes the pirate no longer sick (but doesn't remove sickness event)'''
         if (num > 0):
             self.sick = False
-            announce (self.name + " takes the medicine and is no longer sick!")
+            display.announce (self.name + " takes the medicine and is no longer sick!")
 
     def inflict_damage (self, num, deathcause, combat=False):
         '''Injures the pirate. If needed, it will record the pirate's cause of death'''
         if combat and len(self.defenders) > 0:
             defender = random.choice (self.defenders)
-            announce (f"{defender.name} blocks the attack!")
+            display.announce (f"{defender.name} blocks the attack!")
             return defender.inflict_damage ((num+1)//2, deathcause, False) #Combat should be false here to avoid possible infinite recursion.
         #else:
         self.health = self.health - num
@@ -115,7 +115,7 @@ class CrewMate(Context, superclasses.CombatCritter):
         if (self.sick):
             self.inflict_damage (1, "Died of their illness")
             if(self.health <= 0):
-                announce(self.name + " has died of their illness!")
+                display.announce(self.name + " has died of their illness!")
         elif self.hurtToday == True:
             self.hurtToday = False
         elif self.health < 100:
@@ -176,7 +176,7 @@ class CrewMate(Context, superclasses.CombatCritter):
                         break
                     i += 1
             else:
-                announce ("Equip what?")
+                display.announce ("Equip what?")
 
         #The pirate un-equips an item (based on the name of the item)
         elif (verb == "unequip"):
@@ -190,7 +190,7 @@ class CrewMate(Context, superclasses.CombatCritter):
                         break
                     i += 1
             else:
-                announce ("Unequip what?")
+                display.announce ("Unequip what?")
 
         #Prints a pirate's equipped items
         elif (verb == "inventory"):
@@ -199,7 +199,7 @@ class CrewMate(Context, superclasses.CombatCritter):
         #Orders a pirate to restock their black powder (can only be done on ship)
         elif (verb == "restock"):
             if config.the_player.location != config.the_player.ship:
-                announce ("Powder and shot can only be restocked on the ship!")
+                display.announce ("Powder and shot can only be restocked on the ship!")
             else:
                 self.restock()
         elif (verb == "skills"):
@@ -222,14 +222,14 @@ class CrewMate(Context, superclasses.CombatCritter):
             self.powder += config.the_player.powder
             config.the_player.powder = 0
         if restock_needed == 0:
-            announce (self.name + " doesn't need a restock!")
+            display.announce (self.name + " doesn't need a restock!")
         elif config.the_player.powder == 0:
             if restock_needed < (32 - self.powder):
-                announce (self.name + " takes the last powder!")
+                display.announce (self.name + " takes the last powder!")
             else:
-                announce (self.name + " reports that the ship is out of powder!")
+                display.announce (self.name + " reports that the ship is out of powder!")
         else:
-            announce (self.name + " restocks their powder and shot!")
+            display.announce (self.name + " restocks their powder and shot!")
 
     def reload(self):
         '''pirate reloads their firearms (flintlock pistols are too time consuming to load in combat)'''

@@ -16,6 +16,7 @@ class Location:
         #by default, not visitable
         self.visitable = False
         self.starting_location = self
+        self.visiting = False
 
     def get_x(self):
         return self.x
@@ -34,16 +35,23 @@ class Location:
 
     def visit(self):
         '''main loop governing exploration of an island'''
-        config.the_player.visiting = True
         config.the_player.location = self.starting_location
         config.the_player.location.enter()
-        while config.the_player.visiting:
-            self.start_turn ()
-            self.process_turn ()
-            self.end_turn ()
+        config.the_display.push_updater(self.visit_updater)
+        self.visiting = True
+
+    def visit_updater(self):
+        self.start_turn ()
+        self.process_turn ()
+        self.end_turn ()
+
+    def end_visit(self):
         #Reset to default after visit
-        config.the_player.location = config.the_player.ship
-        config.the_player.next_loc = None
+        if self.visiting:
+            self.visiting = False
+            config.the_display.pop_updater()
+            config.the_player.location = config.the_player.ship
+            config.the_player.next_loc = None
 
     def start_turn(self):
         for crew in config.the_player.get_pirates():

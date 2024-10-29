@@ -12,7 +12,14 @@ class Display ():
         self.updater = []
     def push_updater(self, updater):
         self.updater.append(updater)
+
+    def pop_updater(self):
+        #Never pop the last updater
+        if(len(self.updater) > 1):
+            self.updater.pop()
+
     def do_updater(self):
+        #Do the top updater
         self.updater[-1]()
 
     def begin_loop(self):

@@ -23,7 +23,6 @@ class Player (Context):
         self.world = world
         self.location = ship
         self.next_loc = None
-        self.visiting = False
         self.reporting = True
         self.go = False
         self.pirates = []

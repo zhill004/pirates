@@ -58,8 +58,7 @@ class BeachWithShip (location.SubLocation):
     def process_verb (self, verb, cmd_list, nouns):
         if (verb == "south"):
             display.announce ("You return to your ship.")
-            config.the_player.next_loc = config.the_player.ship
-            config.the_player.visiting = False
+            self.main_location.end_visit()
         elif (verb == "north"):
             config.the_player.next_loc = self.main_location.locations["southHill"]
         elif (verb == "east" or verb == "west"):
@@ -314,7 +313,6 @@ class SouthHill (location.SubLocation):
             game.go = True
             game.ship.set_loc (new_loc)
             game.next_loc = game.ship
-            game.visiting = False
 
             for i in game.get_pirates():
                 # Mess with the crewmate's health a bit.

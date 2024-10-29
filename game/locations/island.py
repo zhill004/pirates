@@ -165,8 +165,7 @@ class Beach_with_ship (location.SubLocation):
     def process_verb (self, verb, cmd_list, nouns):
         if (verb == "south"):
             display.announce ("You return to your ship.")
-            config.the_player.next_loc = config.the_player.ship
-            config.the_player.visiting = False
+            self.main_location.end_visit()
         elif (verb == "north"):
             config.the_player.next_loc = self.main_location.locations["trees"]
         elif (verb == "east" or verb == "west"):

@@ -12,7 +12,7 @@ class Combat():
         self.monsters = monsters
 
     def process_verb (self, verb, cmd_list, nouns):
-        print (self.nouns + " can't " + verb)
+        print (str(self.nouns) + " can't " + verb)
 
     def crewmateAction(self, attacker, allies, enemies):
         """The player chooses an action for a crewmate to take."""

@@ -120,21 +120,15 @@ class Player (Context):
         elif (verb == "go"):
             self.go = True
             if (len(cmd_list) > 1):
-                if (cmd_list[1] == "north"):
-                    self.location.process_verb ("north", cmd_list, nouns)
-                elif (cmd_list[1] == "south"):
-                    self.location.process_verb ("south", cmd_list, nouns)
-                elif (cmd_list[1] == "west"):
-                    self.location.process_verb ("west", cmd_list, nouns)
-                elif (cmd_list[1] == "east"):
-                    self.location.process_verb ("east", cmd_list, nouns)
-                elif (cmd_list[1] == "ashore" and self.location == self.ship):
+                if (cmd_list[1] == "ashore" and self.location == self.ship):
                     if self.ship.get_loc ().visitable == True:
                         self.ship.process_verb ("anchor", cmd_list, nouns)
                         self.ship.get_loc ().visit()
                     else:
                         display.announce("There's nowhere to go ashore.")
                         self.go = False
+                else:
+                    self.location.process_verb(cmd_list[1], cmd_list, nouns)
         else:
             display.announce ("Error: Player object does not understand verb " + verb)
             pass

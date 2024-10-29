@@ -17,26 +17,24 @@ class PeacefulIsland (location.Location):
         self.name = "island"
         self.symbol = 'T'
         self.visitable = True
-        self.starting_location = BeachWithShip(self)
+
         self.locations = {}
 
         self.locations["northBeach"] = NorthBeach(self)
         self.locations["shed"] = Shed(self)
 
-        self.locations["southBeach"] = self.starting_location
+        self.locations["southBeach"] = BeachWithShip(self)
         self.locations["eastBeach"] = EastBeach(self)
         self.locations["westBeach"] = WestBeach(self)
 
         self.locations["southHill"] = SouthHill(self)
         self.locations["shrine"] = Shrine(self)
 
+        self.starting_location = self.locations["southBeach"]
+
     def enter (self, ship):
         display.announce ("You have arrived at a seemingly tranquil island.", pause=False)
 
-    def visit (self):
-        config.the_player.location = self.starting_location
-        config.the_player.location.enter()
-        super().visit()
 
 class BeachWithShip (location.SubLocation):
     def __init__ (self, m):

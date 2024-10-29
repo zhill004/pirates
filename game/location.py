@@ -15,6 +15,7 @@ class Location:
         self.name = 'ocean'
         #by default, not visitable
         self.visitable = False
+        self.starting_location = self
 
     def get_x(self):
         return self.x
@@ -34,6 +35,8 @@ class Location:
     def visit(self):
         '''main loop governing exploration of an island'''
         config.the_player.visiting = True
+        config.the_player.location = self.starting_location
+        config.the_player.location.enter()
         while config.the_player.visiting:
             self.start_turn ()
             self.process_turn ()

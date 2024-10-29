@@ -137,18 +137,15 @@ class Island (location.Location):
         self.name = "island"
         self.symbol = 'I'
         self.visitable = True
-        self.starting_location = Beach_with_ship(self)
         self.locations = {}
-        self.locations["beach"] = self.starting_location
+        self.locations["beach"] = Beach_with_ship(self)
         self.locations["trees"] = Trees(self)
+
+        self.starting_location = self.locations["beach"]
 
     def enter (self, ship):
         display.announce ("arrived at an island", pause=False)
 
-    def visit (self):
-        config.the_player.location = self.starting_location
-        config.the_player.location.enter()
-        super().visit()
 
 class Beach_with_ship (location.SubLocation):
     def __init__ (self, m):

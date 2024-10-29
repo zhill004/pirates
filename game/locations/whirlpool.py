@@ -5,6 +5,7 @@ from game import location
 from game.context import Context
 from game.player import Player
 import game.config as config
+import game.display as display
 
 import random
 
@@ -24,7 +25,7 @@ class Whirlpool (Context, location.Location):
         self.ship = ship
         self.go = False
         while (self.go == False):
-            print ("you have found a whirlpool, what is your command?")
+            display.announce ("you have found a whirlpool, what is your command?")
             Player.get_interaction ([self])
 
 
@@ -54,14 +55,14 @@ class Whirlpool (Context, location.Location):
             if (random.randint(1,2) == 1):
                 config.the_player.gameInProgress = False
                 config.the_player.kill_all_pirates("Drowned in the whirlpool")
-                print ("The ship was destroyed in the whirlpool")
+                display.announce ("The ship was destroyed in the whirlpool", pause=False)
             else:
-                print ("The ship is somehow holding together")
+                display.announce ("The ship is somehow holding together", pause=False)
             self.go = True
     
     def start_day (self):
         if (self.ship != None):
             self.go = False
             while (self.go == False):
-                print ("you are still at the whirlpool, what is your command?")
+                display.announce ("you are still at the whirlpool, what is your command?", pause=False)
                 Player.get_interaction ([self])

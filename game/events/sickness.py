@@ -35,3 +35,4 @@ class Sickness(event.Event):
             result["message"] = c.get_name() + " felt a bit sick"
             result["newevents"] = [ self ]
         return result
+

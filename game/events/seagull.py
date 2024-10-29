@@ -31,7 +31,7 @@ class Seagull (Context, event.Event):
                 if (c.isLucky() == True):
                     self.result["message"] = "luckly, the seagulls fly off."
                 else:
-                    self.result["message"] = c.get_name() + " is attacked by the seagulls."
+                    self.result["message"] = f"{c.get_name()} is attacked by the seagulls."
                     if (c.inflict_damage (self.seagulls, "Pecked to death by seagulls")):
                         self.result["message"] = f".. {c.get_name()} is pecked to death by the seagulls!"
 
@@ -50,10 +50,10 @@ class Seagull (Context, event.Event):
                 display.announce("You have no food to feed the seagulls. This does not bode well for you.")
                 self.go = False
         elif (verb == "help"):
-            print ("the seagulls will pester you until you feed them or chase them off")
+            display.announce ("the seagulls will pester you until you feed them or chase them off", pause=False)
             self.go = False
         else:
-            print ("it seems the only options here are to feed or chase")
+            display.announce ("it seems the only options here are to feed or chase", pause=False)
             self.go = False
 
 
@@ -66,7 +66,7 @@ class Seagull (Context, event.Event):
         self.result["message"] = "default message"
 
         while (self.go == False):
-            print (str (self.seagulls) + " seagulls has appeared what do you want to do?")
+            display.announce(f"{self.seagulls} seagulls have appeared. What do you want to do?", pause=False)
             Player.get_interaction ([self])
 
         return self.result

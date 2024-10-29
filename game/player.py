@@ -47,7 +47,7 @@ class Player (Context):
         for i in range (0,n):
             c = crewmate.CrewMate()
             self.pirates.append (c)
-            self.nouns[c.get_name()] = c
+            self.nouns[c.get_name().lower()] = c
 
         self.verbs['quit'] = self
         self.verbs['status'] = self
@@ -97,7 +97,7 @@ class Player (Context):
         elif (verb == "inventory"):
             self.print_inventory ()
         elif (verb == "debug"):
-            display.announce ("home port is at:" + str(self.world.homex) + ", " + str(self.world.homey))
+            display.announce(f"home port is at: {self.world.homex}, {self.world.homey}")
             self.world.print ()
         elif (verb == "restock"):
             if config.the_player.location != config.the_player.ship:
@@ -115,7 +115,7 @@ class Player (Context):
             self.load_game()
 
         elif (verb == "status"):
-            display.announce ("Day " + str(self.world.get_day()),pause=False)
+            display.announce(f"Day {self.world.get_day()}", pause=False)
             self.status()
         elif (verb == "go"):
             self.go = True
@@ -155,7 +155,8 @@ class Player (Context):
             for k, v in c.nouns.items():
                 nouns[k] = v
 
-        cmd = input ("what is your command: ")
+        cmd = display.get_text_input ("what is your command: ")
+        cmd = cmd.lower()
         cmd_list = cmd.split()   # split on whitespace
 
         if(len(cmd_list) > 0):
@@ -206,11 +207,11 @@ class Player (Context):
         self.gameInProgress = False
 
     def status (self):
-        display.announce ("The ship is at location ", end="",pause=False)
+        display.announce ("The ship is at ", end="",pause=False)
         loc = self.ship.get_loc()
-        display.announce (str(loc.get_x()) + ", " + str(loc.get_y()),pause=False)
-        display.announce ("Food stores are at: " + str (self.ship.get_food()),pause=False)
-        display.announce ("Powder stores are at: " + str (self.powder//self.CHARGE_SIZE) + " cannon " + str (self.powder%self.CHARGE_SIZE) + " sidearm",pause=False)
+        display.announce(f"Longitude: {loc.get_x()}, Latitude: {loc.get_y()}", pause=False)
+        display.announce(f"Food stores are at: {self.ship.get_food()}", pause=False)
+        display.announce(f"Powder stores are at: {self.powder // self.CHARGE_SIZE} cannon {self.powder % self.CHARGE_SIZE} sidearm", pause=False)
         self.ship.print ()
         for crew in self.get_pirates():
             crew.print()
@@ -286,8 +287,8 @@ class Player (Context):
 
     def print_inventory (self):
         for i in self.inventory:
-            print (i)
-        print ()
+            display.announce (i, pause=False)
+        display.announce ("", pause=False)
 
     @staticmethod
     def game_over ():
@@ -313,7 +314,7 @@ class Player (Context):
             score += t.getValue()
 
         score = score*multiplier
-        f.write(now.strftime("%A %B %d, %Y") + " " + str(score) + " points\n")
+        f.write(f"{now.strftime('%A %B %d, %Y')} {score} points\n")
         for c in config.the_player.pirates:
             f.write(str(c) + "lived to tell the tale\n")
         for d in config.the_player.piscine_dormitory:

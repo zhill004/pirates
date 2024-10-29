@@ -7,6 +7,7 @@ import game.items as items
 from game.context import Context
 import game.config as config
 
+skill_icons = {"brawling": "👊 ", "swords": "⚔️  ", "melee": "🏏 ", "guns": "🔫 ", "cannons": "🏴‍☠️   ", "swimming": "🏊 "}
 
 class CrewMate(Context, superclasses.CombatCritter):
     '''Describes a pirate crewmate. The player controls these.'''
@@ -57,7 +58,7 @@ class CrewMate(Context, superclasses.CombatCritter):
 
     def __str__ (self):
         '''to string. Lists name and death cause (for score log)'''
-        return self.name + " " + self.death_cause
+        return f"{self.name} {self.death_cause}"
 
     def get_health (self):
         return self.health
@@ -66,7 +67,7 @@ class CrewMate(Context, superclasses.CombatCritter):
         '''Makes the pirate no longer sick (but doesn't remove sickness event)'''
         if (num > 0):
             self.sick = False
-            display.announce (self.name + " takes the medicine and is no longer sick!")
+            display.announce(f"{self.name} takes the medicine and is no longer sick!")
 
     def inflict_damage (self, num, deathcause, combat=False):
         '''Injures the pirate. If needed, it will record the pirate's cause of death'''
@@ -115,7 +116,7 @@ class CrewMate(Context, superclasses.CombatCritter):
         if (self.sick):
             self.inflict_damage (1, "Died of their illness")
             if(self.health <= 0):
-                display.announce(self.name + " has died of their illness!")
+                display.announce(f"{self.name} has died of their illness!")
         elif self.hurtToday == True:
             self.hurtToday = False
         elif self.health < 100:
@@ -147,20 +148,23 @@ class CrewMate(Context, superclasses.CombatCritter):
 
     def print (self):
         '''Prints status to terminal'''
-        outstring = "   " + self.name + " Health: " + str(self.health)
+        outstring = f"   {self.name} Health: {self.health}"
         if (self.sick):
             outstring = outstring + " --Sick"
         if (self.isLucky()):
             outstring = outstring + " ++Lucky"
 
-        print (outstring)
+        display.announce (outstring, pause=False)
 
     def print_skills (self):
         '''Prints status to terminal'''
-        outstring = self.name + ":" + " "*(CrewMate.longest_name+1-len(self.name))
+        outstring = f"{self.name}:{' ' * (CrewMate.longest_name + 1 - len(self.name))}"
         for k in self.skills.keys():
-            outstring = outstring + k + ":" + str(self.skills[k]) + " "
-        print (outstring)
+            outstring += f"{k}: {self.skills[k]}"
+            if k in skill_icons.keys():
+                outstring += skill_icons[k]
+            outstring += " "
+        display.announce (outstring, pause=False)
 
     def process_verb (self, verb, cmd_list, nouns):
         '''Processes commands'''
@@ -205,12 +209,12 @@ class CrewMate(Context, superclasses.CombatCritter):
         elif (verb == "skills"):
             self.print_skills ()
         else:
-            print (self.name + " doesn't know how to " + verb)
+            display.announce(f"{self.name} doesn't know how to {verb}", pause=False)
 
     def print_inventory (self):
         for i in self.items:
-            print (i)
-        print ()
+            display.announce (i, pause=False)
+        display.announce ("", pause=False)
 
     def restock(self):
         '''pirate restocks their black powder from the ship's reserves'''

@@ -12,11 +12,11 @@ class Combat():
         self.monsters = monsters
 
     def process_verb (self, verb, cmd_list, nouns):
-        print (str(self.nouns) + " can't " + verb)
+        display.announce(f"{self.nouns} can't {verb}", pause=False)
 
     def crewmateAction(self, attacker, allies, enemies):
         """The player chooses an action for a crewmate to take."""
-        display.announce(attacker.get_name() + " has seized the initiative! What should they do?",pause=False)
+        display.announce(f"{attacker.get_name()} has seized the initiative! What should they do?", pause=False)
         actions = attacker.getAttacks()
         # actions = attacker.getMiscActions()
         if len(actions) > 0:

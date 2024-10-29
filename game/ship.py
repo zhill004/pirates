@@ -54,19 +54,19 @@ class Ship (Context):
 
 
     def print (self):
-        print ("ship is at: " + str(self.loc.get_x()) + ", " + str(self.loc.get_y()))
+        display.announce(f"ship is at: {self.loc.get_x()}, {self.loc.get_y()}", pause=False)
         if ((self.hx==0) and (self.hy==0)):
-            print ("ship anchored")
+            display.announce ("ship anchored", pause=False)
         elif ((self.hx == 1) and (self.hy == 0)):
-            print ("ship heading is east")
+            display.announce ("ship heading is east", pause=False)
         elif ((self.hx == -1) and (self.hy == 0)):
-            print ("ship heading is west")
+            display.announce ("ship heading is west", pause=False)
         elif ((self.hx == 0) and (self.hy == -1)):
-            print ("ship heading is north")
+            display.announce ("ship heading is north", pause=False)
         elif ((self.hx == 0) and (self.hy == 1)):
-            print ("ship heading is south")
+            display.announce ("ship heading is south", pause=False)
 
-        print ("ship has " + str (self.medicine) + " medicine")
+        display.announce(f"ship has {self.medicine} medicine", pause=False)
 
     def get_loc (self):
         return self.loc

@@ -4,4 +4,4 @@
 
 
 the_player = None
-
+the_display = None

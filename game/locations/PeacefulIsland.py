@@ -31,7 +31,7 @@ class PeacefulIsland (location.Location):
         self.locations["shrine"] = Shrine(self)
 
     def enter (self, ship):
-        print ("You have arrived at a seemingly tranquil island.")
+        display.announce ("You have arrived at a seemingly tranquil island.", pause=False)
 
     def visit (self):
         config.the_player.location = self.starting_location
@@ -216,7 +216,7 @@ class DoubleHoe(Item):
             targets = []
 
             while(len(targets) < self.NUMBER_OF_ATTACKS): # While loop so that it keeps going until the player picks two different targets.
-                print(f"Pick target number {len(targets)}.")
+                display.announce(f"Pick target number {len(targets)}.", pause=False)
                 choice = menu(options)
                 if(not choice in targets):
                     targets.append(enemies[choice])
@@ -249,12 +249,12 @@ class SouthHill (location.SubLocation):
         if(verb == "pick"):
             pickedFlower = False
             while(not pickedFlower):
-                print("You spot three flowers to pick from. Choose one!")
+                display.announce("You spot three flowers to pick from. Choose one!", pause=False)
                 for i in self.flowers:
-                    print("-" + i)
-                print("-Leave.")
+                    display.announce("-" + i, pause=False)
+                display.announce("-Leave.", pause=False)
 
-                flowerChoice = input()
+                flowerChoice = display.get_text_input("")
 
                 # If the player chooses to leave, return in order to end the function.
                 if("leave" in flowerChoice.lower()):
@@ -272,7 +272,7 @@ class SouthHill (location.SubLocation):
                     SouthHill.GetEffectFromFlowerColor(flowerChoice)
 
                     flowerChoice = flowerChoice[0].lower() + flowerChoice[1:]
-                    print(f"You picked the {flowerChoice} flower.")
+                    display.announce(f"You picked the {flowerChoice} flower.")
 
     # Returns a list of three random flowers from the list defined below. As we don't refer to 'self' anywhere inside, we can make it a static method (meaning it's not tied to an instance of an object).
     @staticmethod
@@ -407,15 +407,15 @@ class Shrine (location.SubLocation):
     # Handles the logic and output for the shrine.
     def HandleShrine(self):
         if(not self.shrineUsed):
-            print("As you investigate the shrine, your body freezes up, and a mysterious voice echoes into your mind.")
-            print("'Lost travelers... I am the spirit guardian of this shrine. I can provide you with bountiful luck and vitality if you answer my riddle.'")
-            choice = input("Answer the spirit's riddle? ")
+            display.announce("As you investigate the shrine, your body freezes up, and a mysterious voice echoes into your mind.", pause=False)
+            display.announce("'Lost travelers... I am the spirit guardian of this shrine. I can provide you with bountiful luck and vitality if you answer my riddle.'", pause=False)
+            choice = display.get_text_input("Answer the spirit's riddle? ")
             if("yes" in choice.lower()):
                 self.HandleRiddles()
             else:
-                print("You turn away from the shrine.")
+                display.announce("You turn away from the shrine.", pause=False)
         else:
-            print("The shrine is inert.")
+            display.announce("The shrine is inert.", pause=False)
 
     # Handles everything for the shrine spirit's riddles.
     def HandleRiddles(self):
@@ -424,13 +424,13 @@ class Shrine (location.SubLocation):
 
         # While the player still has guesses, ask for their answer and respond appropriately.
         while guesses > 0:
-            print(riddle[0])
+            display.announce(riddle[0], pause=False)
             plural = ""
             if(guesses != 1):
                 plural = "s"
-            
-            print(f"You may guess {guesses} more time{plural}.") 
-            choice = input("What is your guess? ")
+
+            display.announce(f"You may guess {guesses} more time{plural}.", pause=False)
+            choice = display.get_text_input("What is your guess? ")
             if riddle[1] in choice:
                 self.RiddleReward()
                 display.announce("Feeling blessed by the shrine spirit, you say your thanks and turn away.")

@@ -13,7 +13,7 @@ class LuckyDay (event.Event):
         # choose a lucky crew member
 
         c = random.choice(config.the_player.get_pirates())
-        msg = c.get_name() + " is having a lucky day"
+        msg = f"{c.get_name()} is having a lucky day"
         c.lucky = True
         result = {}
         result["message"] = msg

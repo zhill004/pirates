@@ -143,7 +143,7 @@ class Island (location.Location):
         self.locations["trees"] = Trees(self)
 
     def enter (self, ship):
-        print ("arrived at an island")
+        display.announce ("arrived at an island", pause=False)
 
     def visit (self):
         config.the_player.location = self.starting_location

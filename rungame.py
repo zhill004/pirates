@@ -9,17 +9,23 @@ import game.ship as ship
 import game.world as world
 import game.player as player
 import game.config as config
+import game.display as display
 
 ship_v     = ship.Ship()
 world_v    = world.World (ship_v)
 start_loc  = world_v.get_startloc()
 ship_v.set_loc (start_loc)
 
-player_v   = player.Player(world_v, ship_v)
+player.Player(world_v, ship_v)
+display.Display()
 
-while (config.the_player.notdone()):
+def sea_state_update():
     config.the_player.get_world().start_day ()
     config.the_player.process_day()
     config.the_player.get_world().end_day ()
+
+config.the_display.push_updater(sea_state_update)
+
+config.the_display.begin_loop()
 
 # world_v.print()

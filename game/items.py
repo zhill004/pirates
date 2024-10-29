@@ -19,7 +19,7 @@ class Item(superclasses.ActionResolver, context.Context):
         self.verb2 = None
 
     def __str__(self):
-        return self.name + " (" + str(self.getValue()) + " shillings)"
+        return f"{self.name} ({self.getValue()} shillings)"
 
     def __lt__(self, other):
         return self.name < other.name
@@ -42,14 +42,14 @@ class Item(superclasses.ActionResolver, context.Context):
     def getAttacks(self, owner):
         attacks = []
         if self.damage[1] > 0 and not self.verb is None and not self.verb2 is None and self.skill in owner.skills.keys() and self.ready():
-            attacks.append(superclasses.CombatAction(self.verb + " with " + self.name, superclasses.Attack(self.name, self.verb2, owner.skills[self.skill], self.damage, self.firearm), self))
+            attacks.append(superclasses.CombatAction(f"{self.verb} with {self.name}", superclasses.Attack(self.name, self.verb2, owner.skills[self.skill], self.damage, self.firearm), self))
 
         return attacks
 
     def pickTargets(self, action, attacker, allies, enemies):
         options = []
         for t in enemies:
-            options.append("attack " + t.name)
+            options.append(f"attack {t.name}")
         choice = menu (options)
         return [enemies[choice]]
 

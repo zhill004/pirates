@@ -38,12 +38,12 @@ class ActionResolver():
         options = []
         if isinstance(action.action, Defend):
             for t in allies:
-                options.append("protect " + t.get_name())
-            choice = menu (options)
+                options.append(f"protect {t.get_name()}")
+            choice = menu(options)
             return [allies[choice]]
         else:
             for t in enemies:
-                options.append("attack " + t.get_name())
+                options.append(f"attack {t.get_name()}")
             choice = menu (options)
             return [enemies[choice]]
 
@@ -62,16 +62,16 @@ class ActionResolver():
                     if moving.isLucky() == True:
                         roll = min(roll, random.randrange(100))
                     if roll < chosen_attk.success:
-                        display.announce (moving.get_name() + " " + chosen_attk.description + " " + chosen_target.get_name() + "!")
+                        display.announce(f"{moving.get_name()} {chosen_attk.description} {chosen_target.get_name()}!")
                         damage = random.randrange(chosen_attk.damage_range[0],chosen_attk.damage_range[1]+1)
-                        deathcause = "slain by a " + moving.get_type_name() + "'s " + chosen_attk.name
+                        deathcause = f"slain by a {moving.get_type_name()}'s {chosen_attk.name}"
                         deader = chosen_target.inflict_damage(damage, deathcause, True)
                         if not (deader is None):
-                            display.announce (deader.get_name() + " is killed!")
-                    elif (roll == chosen_attk.success):
-                        display.announce (moving.get_name() + " barely misses " + chosen_target.get_name() + "!")
+                            display.announce(f"{deader.get_name()} is killed!")
+                    elif roll == chosen_attk.success:
+                        display.announce(f"{moving.get_name()} barely misses {chosen_target.get_name()}!")
                     else:
-                        display.announce (moving.get_name() + " misses " + chosen_target.get_name() + ".")
+                        display.announce(f"{moving.get_name()} misses {chosen_target.get_name()}.")
 
 class CombatCritter(ActionResolver):
     def __init__(self, name, hp, speed):

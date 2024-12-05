@@ -3,7 +3,7 @@ from re import I
 import game.ship as ship
 import game.crewmate as crewmate
 from game.context import Context
-import jsonpickle
+#import jsonpickle
 import game.display as display
 import game.config as config
 import game.items as items
@@ -73,7 +73,7 @@ class Player (Context):
         else:
             display.announce ("saving...", end="",pause=False)
             f = open ("save.json", "w")
-            f.write (jsonpickle.encode (self))
+            #f.write (jsonpickle.encode (self))
             f.close()
             display.announce ("..done")
 
@@ -85,7 +85,7 @@ class Player (Context):
             else:
                 with open ("save.json") as f:
                     s = f.read()
-                config.the_player = jsonpickle.decode (s)
+                #config.the_player = jsonpickle.decode (s)
                 self.go = True
 
     def process_verb (self, verb, cmd_list, nouns):

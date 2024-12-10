@@ -50,7 +50,7 @@ class Ship (Context):
             else:
                 display.announce ("Give medicine to who?")
         else:
-            display.announce ("Error: Ship object doe not understand verb " + verb)
+            display.announce ("Error: Ship object does not understand verb " + verb)
 
 
     def print (self):

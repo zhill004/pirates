@@ -57,12 +57,7 @@ class Desert(location.SubLocation):
     def enter (self):
         if(self.town_state == 'explored'):
             display.announce("You cleared the town and it has Zombies!")
-            display.announce("The beach is North, do you want to continue into town?")
-            if(self.verbs == 'north'):
-                config.the_player.next_loc = Beach_with_ship(self)
-            elif(self.verbs == 'continue'):
-                self.verbs = 'investigate'
-                pass
+            display.announce("The beach is South, do you want to continue into town?")
         else:
             display.announce("Arrived at the deserted town. You can go in a house to find things. ('investigate' or 'leave'): ")
     def process_verb(self, verb, cmd_list, nouns):
@@ -73,13 +68,18 @@ class Desert(location.SubLocation):
             display.announce("The town is full of Zombies!")
             self.event_chance = 100
             config.the_player.go = True
+            self.town_state = 'explored'
         if (verb == 'east'):
+            self.event_chance = 0
             config.the_player.next_loc = self.main_location.locations["Bar"]
         elif (verb == 'south'):
+            self.event_chance = 0
             config.the_player.next_loc = self.main_location.locations["beach"]
         elif (verb == 'north'):
+            self.event_chance = 0
             config.the_player.next_loc = self.main_location.locations["Forest_with_Treasure"]
-        elif 'west':
+        elif (verb == 'west'):
+            self.event_chance = 0
             display.announce("You walk through the cleared maze.")
             config.the_player.next_loc = self.main_location.locations["beach"]
 
@@ -98,7 +98,7 @@ class Bar(location.SubLocation):
         display.announce("There is a few people rolling dice for treasure, roll for the treasure?")
     
     def process_verb(self, verb, cmd_list, nouns):
-        if(self.verb == 'roll' and self.bar_status == 'allowed'):
+        if(verb == 'roll' and self.bar_status == 'allowed'):
             dice_roll = random.randint(2,12)
             display.announce("You rolled " f"{dice_roll}")
             roll_dice = random.randint(2,10)
@@ -124,7 +124,7 @@ class Bar(location.SubLocation):
             config.the_player.next_loc = self.main_location.locations["beach"]
         elif(verb == 'west'):
             config.the_player.next_loc = self.main_location.locations["Deserted_Town"]
-        else:
+        elif(verb == 'east'):
             display.announce("You are the furthest east you can go.")
     
 
@@ -151,8 +151,8 @@ class Beach_with_ship (location.SubLocation):
             config.the_player.next_loc = self.main_location.locations["Forest_with_Treasure"]
         elif (verb == "east"):
             config.the_player.next_loc = self.main_location.locations["Maze"]
-        else:
-            config.the_player.next_loc = self.main_location.locations["Deserted_Town"]
+        elif(verb == 'west'):
+            display.announce("You encounter a cliff to your west, you cannot pass.")
 
 class Zombies(combat.Monster):
     def __init__ (self, name):
@@ -245,8 +245,8 @@ class Maze(location.SubLocation):
     def enter (self):
         if(self.maze_state == 'exit'):
             display.announce("You already cleared this maze.")
-            display.announce("You go back to the beach dejected.")
-            display.push_updater(self.pass_through_updater)
+            display.announce("You go through the maze to the Deserted Town.")
+            self.pass_through_updater()
         else:
             display.announce ("Arrived at a branch in a maze. You can go any cardinal direction.")
         
@@ -312,9 +312,8 @@ class Forest_with_Treasure(location.SubLocation):
         if (verb == "east"):
             choice = random.randint(1,2)
             if (choice == 1):
-                config.the_player.next_loc = self.main_location.locations["Deserted_Town"]
-            else:
-                config.the_player.next_loc = self.main_location.locations["Bar"]
+                config.the_player.next_loc = self.main_location.locations["Maze"]
+                
         if verb == "take":
             if self.item_in_box == None and self.item_in_corpse == None:
                 display.announce ("You don't see anything to take.")

@@ -306,8 +306,8 @@ class SouthHill (location.SubLocation):
                 spotY *= -1
 
             # Clamp the numbers so the location can't be outside the world.
-            spotX = numpy.clip(game.ship.loc.get_x() + spotX, 0, game.world.worldsize)
-            spotY = numpy.clip(game.ship.loc.get_y() + spotY, 0, game.world.worldsize)
+            #spotX = numpy.clip(game.ship.loc.get_x() + spotX, 0, game.world.worldsize)
+            #spotY = numpy.clip(game.ship.loc.get_y() + spotY, 0, game.world.worldsize)
 
             new_loc = game.world.get_loc (spotX, spotY)
             game.go = True

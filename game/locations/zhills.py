@@ -20,6 +20,8 @@ class Island (location.Location):
         self.locations["beach"] = Beach_with_ship(self)
         self.locations["Forest_with_Treasure"] = Forest_with_Treasure(self)
         self.locations["Maze"] = Maze(self)
+        self.locations["Deserted_Town"] = Desert(self)
+        self.locations["Bar"] = Bar(self)
 
         self.starting_location = self.locations["beach"]
 
@@ -35,8 +37,96 @@ class Island (location.Location):
         elif (verb == "east"):
             config.the_player.next_loc = self.main_location.locations["Maze"]
         elif(verb == 'west'):
-            config.the_player.next_loc = self.main_location.locations["Deserted_Town"]
+            display.announce("There looks to be a massive cliff you cannot travel through.")
 
+class Desert(location.SubLocation):
+    def __init__ (self, m):
+        super().__init__(m)
+        self.name = "Deserted Town"
+        self.verbs['north'] = self
+        self.verbs['south'] = self
+        self.verbs['east'] = self
+        self.verbs['west'] = self
+        self.verbs['investigate'] = self
+        self.verbs['continue'] = self
+        self.verbs['leave'] = self
+        self.town_state = 'unexplored'
+        self.event_chance = 0
+        self.events.append(Rabid_Pirates())
+
+    def enter (self):
+        if(self.town_state == 'explored'):
+            display.announce("You cleared the town and it has Zombies!")
+            display.announce("The beach is North, do you want to continue into town?")
+            if(self.verbs == 'north'):
+                config.the_player.next_loc = Beach_with_ship(self)
+            elif(self.verbs == 'continue'):
+                self.verbs = 'investigate'
+                pass
+        else:
+            display.announce("Arrived at the deserted town. You can go in a house to find things. ('investigate' or 'leave'): ")
+    def process_verb(self, verb, cmd_list, nouns):
+        if(verb == 'leave'):
+            display.announce("Wise choice, you look around the town to find zombies.")
+            self.town_state = 'explored'
+        elif(verb == 'investigate'):
+            display.announce("The town is full of Zombies!")
+            self.event_chance = 100
+            config.the_player.go = True
+        if (verb == 'east'):
+            config.the_player.next_loc = self.main_location.locations["Bar"]
+        elif (verb == 'south'):
+            config.the_player.next_loc = self.main_location.locations["beach"]
+        elif (verb == 'north'):
+            config.the_player.next_loc = self.main_location.locations["Forest_with_Treasure"]
+        elif 'west':
+            display.announce("You walk through the cleared maze.")
+            config.the_player.next_loc = self.main_location.locations["beach"]
+
+class Bar(location.SubLocation):
+    def __init__ (self, m):
+        super().__init__(m)
+        self.name = "Bar"
+        self.verbs['roll'] = self
+        self.verbs['south'] = self
+        self.verbs['north'] = self
+        self.verbs['east'] = self
+        self.verbs['west'] = self
+        self.bar_status = 'allowed'
+
+    def enter(self):
+        display.announce("There is a few people rolling dice for treasure, roll for the treasure?")
+    
+    def process_verb(self, verb, cmd_list, nouns):
+        if(self.verb == 'roll' and self.bar_status == 'allowed'):
+            dice_roll = random.randint(2,12)
+            display.announce("You rolled " f"{dice_roll}")
+            roll_dice = random.randint(2,10)
+            display.announce("They have rolled " f"{roll_dice}")
+            if (dice_roll > roll_dice):
+                display.announce("You won! You receive a Treasure!")
+                config.the_player.add_to_inventory([Diamond_Sword()])
+            elif(dice_roll == roll_dice):
+                display.announce("You tied, you don't win nor lose anything.")
+            else:
+                display.announce("You lost. Give up your weapon.")
+                game = config.the_player
+                pirates = game.get_pirates()
+                if(len(pirates[0].items) >= 1):
+                    pirates[0].items.pop
+                else:
+                    display.announce("You cannot lose something you don't have. You are kicked out of the Bar.")
+                    self.bar_status = 'kicked'
+
+        if(verb == 'north'):
+            config.the_player.next_loc = self.main_location.locations["Forest_with_Treasure"]
+        elif(verb == 'south'):
+            config.the_player.next_loc = self.main_location.locations["beach"]
+        elif(verb == 'west'):
+            config.the_player.next_loc = self.main_location.locations["Deserted_Town"]
+        else:
+            display.announce("You are the furthest east you can go.")
+    
 
 class Beach_with_ship (location.SubLocation):
     def __init__ (self, m):
@@ -51,7 +141,7 @@ class Beach_with_ship (location.SubLocation):
         self.events.append(Rabid_Pirates())
 
     def enter (self):
-        display.announce ("arrive at the beach. Your ship is at anchor in a small bay to the south.")
+        display.announce ("Arrived at the beach. Your ship is at anchor in a small bay to the south.")
 
     def process_verb (self, verb, cmd_list, nouns):
         if (verb == "south"):
@@ -62,7 +152,7 @@ class Beach_with_ship (location.SubLocation):
         elif (verb == "east"):
             config.the_player.next_loc = self.main_location.locations["Maze"]
         else:
-            display.announce("You walk around the island.")
+            config.the_player.next_loc = self.main_location.locations["Deserted_Town"]
 
 class Zombies(combat.Monster):
     def __init__ (self, name):
@@ -120,16 +210,26 @@ class Maze(location.SubLocation):
         self.verbs['south'] = self
         self.verbs['east'] = self
         self.verbs['west'] = self
-
         self.verbs['take'] = self
         self.verbs['give'] = self
 
+    def pass_through_updater(self):
+        self.main_location.start_turn ()
+        config.the_player.next_loc = self.main_location.locations["Deserted_Town"]
+        self.main_location.end_turn ()
+        display.pop_updater()
+
     def exit(self):
         display.announce("Congratulations, you have explored the maze!")
+        config.the_player.next_loc = self.main_location.locations["Deserted_Town"]
         
     def sick_man(self):
-        name = 'Paul'
-        display.announce(f"{name} is sick, if you give him medicine he will reward you.")
+        name = 'Jonathan'
+        display.announce(f"{name} is a sick man in the maze, he coughs on you!")
+        game = config.the_player
+        for i in game.get_pirates():
+            if(random.randint(0, 3) == 0):
+                i.sick = True
 
     def continue_maze(self):
         display.announce("Nothing happened, continue exploring the maze.")
@@ -137,61 +237,41 @@ class Maze(location.SubLocation):
 
     def treasure(self):
         display.announce("You found a treasure!! It feels kind of lucky.")
-        self.lucky = True
+        game = config.the_player
+        for i in game.get_pirates():
+            if(random.randint(0, 3) == 0):
+                i.lucky = True
 
     def enter (self):
-        display.announce ("arrive at a branch in a maze. You can go north east south or west.")
+        if(self.maze_state == 'exit'):
+            display.announce("You already cleared this maze.")
+            display.announce("You go back to the beach dejected.")
+            display.push_updater(self.pass_through_updater)
+        else:
+            display.announce ("Arrived at a branch in a maze. You can go any cardinal direction.")
         
     def process_verb(self, verb, cmd_list, nouns):
-        while(self.maze_state != exit):
-            if(verb == 'north'):
+        if(self.maze_state != 'exit'):
+            if(verb == 'north' or verb == 'south' or verb == 'east' or verb == 'west'):
                 self.maze_state = random.choice(self.maze_state_options)
-                display.announce("Due to your choice, the maze is now ", self.maze_state)
+                display.announce("These maze walls look tall.")
                 if (self.maze_state == 'continue'):
                     self.continue_maze()
                 elif(self.maze_state == 'treasure'):
                     self.treasure()
                 elif(self.maze_state == 'sick'):
                     self.sick_man()
-            elif(verb == 'south'):
-                self.maze_state = random.choice(self.maze_state_options)
-                display.announce(f"Due to your choice, the maze is now {self.maze_state}")
-                if (self.maze_state == 'continue'):
-                    self.continue_maze()
-                elif(self.maze_state == 'treasure'):
-                    self.treasure()
-                elif(self.maze_state == 'sick'):
-                    self.sick_man()
-            elif(verb == 'west'):
-                self.maze_state = random.choice(self.maze_state_options)
-                display.announce(f"Due to your choice, the maze is now {self.maze_state}")
-                if (self.maze_state == 'continue'):
-                    self.continue_maze()
-                elif(self.maze_state == 'treasure'):
-                    self.treasure()
-                elif(self.maze_state == 'sick'):
-                    self.sick_man()
-            elif(verb == 'east'):
-                self.maze_state = random.choice(self.maze_state_options)
-                display.announce(f"Due to your choice, the maze is now {self.maze_state}")
-                if (self.maze_state == 'continue'):
-                    self.continue_maze()
-                elif(self.maze_state == 'treasure'):
-                    self.treasure()
-                elif(self.maze_state == 'sick'):
-                    self.sick_man()
+                elif(self.maze_state == 'exit'):
+                    self.exit()
             elif(verb == 'take'):
                 config.the_player.add_to_inventory([item])
             elif(verb == "give" and self.maze_state == "sick"):
-                if (len(cmd_list) > 3):
-                    if ((cmd_list[1] == "medicine") and (cmd_list[3] in nouns.keys())):
-                        if (config.the_player.ship.medicine.medicine > 0):
-                            nouns[cmd_list[3]].receive_medicine(1)
-                            config.the_player.ship.medicine += config.the_player.ship.medicine - 1
-                        else:
-                            display.announce ("no more medicine to give")
-                else:
-                    display.announce ("Give medicine to who?")
+                if ((cmd_list[1] == "medicine") and (cmd_list[3] in nouns.keys())):
+                    if (config.the_player.ship.medicine.medicine > 0):
+                        nouns[cmd_list[3]].receive_medicine(1)
+                        config.the_player.ship.medicine += config.the_player.ship.medicine - 1
+                    else:
+                        display.announce ("Cannot give medicine you do not have.")
 
 class Forest_with_Treasure(location.SubLocation):
     def __init__ (self, m):
@@ -225,8 +305,16 @@ class Forest_with_Treasure(location.SubLocation):
         display.announce (description)
 
     def process_verb (self, verb, cmd_list, nouns):
-        if (verb == "south" or verb == "north" or verb == "east" or verb == "west"):
+        if (verb == "south"):
             config.the_player.next_loc = self.main_location.locations["beach"]
+        if (verb == "north"):
+            display.announce("You are the most north possible.")
+        if (verb == "east"):
+            choice = random.randint(1,2)
+            if (choice == 1):
+                config.the_player.next_loc = self.main_location.locations["Deserted_Town"]
+            else:
+                config.the_player.next_loc = self.main_location.locations["Bar"]
         if verb == "take":
             if self.item_in_box == None and self.item_in_corpse == None:
                 display.announce ("You don't see anything to take.")
